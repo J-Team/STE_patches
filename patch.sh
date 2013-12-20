@@ -3,7 +3,6 @@
 rm -rf frameworks/av
 rm -rf frameworks/native
 rm -rf hardware/libhardware_legacy
-rm -rf packages/apps/Phone
 
 repo sync
 
@@ -31,15 +30,6 @@ cp patches/vibrator_fix.patch hardware/libhardware_legacy/vibrator_fix.patch
 cd hardware/libhardware_legacy
 git apply vibrator_fix.patch
 rm vibrator_fix.patch
-cd ../..
-
-echo ""
-
-echo "Applying low incall volume fix"
-cp patches/packages_apps_Phone.patch packages/apps/Phone/packages_apps_Phone.patch
-cd packages/apps/Phone
-git apply packages_apps_Phone.patch
-rm packages_apps_Phone.patch
 cd ../..
 
 
