@@ -1,0 +1,186 @@
+From e2b8e6071721fb8c1b4a1f044f6d3742142876c5 Mon Sep 17 00:00:00 2001
+From: Franco Rapetti <frapeti@gmail.com>
+Date: Tue, 26 Nov 2013 16:36:53 -0200
+Subject: [PATCH 1/4] Port incall volume workaround to cm11 - q Conflicts: 
+ src/com/android/phone/PhoneUtils.java
+
+---
+ src/com/android/phone/PhoneUtils.java |   56 +++++++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
+
+diff --git a/src/com/android/phone/PhoneUtils.java b/src/com/android/phone/PhoneUtils.java
+index 2d44977..d5cee0b 100644
+--- a/src/com/android/phone/PhoneUtils.java
++++ b/src/com/android/phone/PhoneUtils.java
+@@ -2765,4 +2765,60 @@ public class PhoneUtils {
+         return context.getResources().getConfiguration().orientation
+                 == Configuration.ORIENTATION_LANDSCAPE;
+     }
++
++    static class PhoneSettings {
++        /* vibration preferences */
++        static boolean vibOn45Secs(Context context) {
++            return getPrefs(context).getBoolean("button_vibrate_45", false);
++        }
++        static boolean vibHangup(Context context) {
++            return getPrefs(context).getBoolean("button_vibrate_hangup", false);
++        }
++        static boolean vibOutgoing(Context context) {
++            return getPrefs(context).getBoolean("button_vibrate_outgoing", false);
++        }
++        static boolean vibCallWaiting(Context context) {
++            return getPrefs(context).getBoolean("button_vibrate_call_waiting", false);
++        }
++
++        /* misc. UI and behaviour preferences */
++        static boolean showInCallEvents(Context context) {
++            return getPrefs(context).getBoolean("button_show_ssn_key", false);
++        }
++
++        private static SharedPreferences getPrefs(Context context) {
++            return PreferenceManager.getDefaultSharedPreferences(context);
++        }
++    }
++    
++     /**
++     * Reset the audio stream volume to fix the low in-call volume bug.
++     *
++     * Due to a bug in the OMX system, the audio stream volume is set to 0 after it was set to it's default volume.
++     * Calling PhoneUtils.resetAudioStreamVolume() triggers the system to reset the volume.
++     *
++     * This should be called on every place where is switched between audio modes.
++     *
++     * REMARK: I think it only appears on the voice call stream, but to be sure I also do it on the bluetooth stream.
++     */
++    static void resetAudioStreamVolume() {
++        PhoneGlobals app = PhoneGlobals.getInstance();
++        AudioManager audioManager = (AudioManager) app.getSystemService(Context.AUDIO_SERVICE);
++        // determine actual streamType
++        int streamType = AudioManager.STREAM_VOICE_CALL;
++        if (app.isBluetoothHeadsetAudioOn()) {
++            streamType = AudioManager.STREAM_BLUETOOTH_SCO;
++        }
++        // determine volume and 1 level lower volume (lowest level can be 0)
++        int volume = audioManager.getStreamVolume(streamType);
++        int lowerVolume = volume - 1;
++        if (lowerVolume < 0) {
++            lowerVolume = 0;
++        }
++        log("resetAudioStreamVolume (streamType=" + streamType + ", streamVolume=" + volume + ")...");
++        // It's important to change it to another volume before restoring the original volume,
++        // otherwise the volume change will NOT be triggered!!
++        audioManager.setStreamVolume(streamType, lowerVolume, 0);
++        audioManager.setStreamVolume(streamType, volume, 0);
++    }
+ }
+-- 
+1.7.10.4
+
+
+From 6fbc41859b80488d3a4581a9174ce779e05f68bd Mon Sep 17 00:00:00 2001
+From: Franco Rapetti <frapeti@gmail.com>
+Date: Tue, 26 Nov 2013 16:59:21 -0200
+Subject: [PATCH 2/4] reset the audio volume stream after switching audio mode
+
+---
+ src/com/android/phone/AudioRouter.java |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/com/android/phone/AudioRouter.java b/src/com/android/phone/AudioRouter.java
+index 3c8e9d3..1d136a2 100644
+--- a/src/com/android/phone/AudioRouter.java
++++ b/src/com/android/phone/AudioRouter.java
+@@ -350,6 +350,10 @@ import java.util.List;
+         if (doNotify) {
+             notifyListeners();
+         }
++        
++        // Fix for low in-call volume bug.
++        // Reset the audio volume stream after switching audio mode
++        PhoneUtils.resetAudioStreamVolume();
+     }
+ 
+     /**
+-- 
+1.7.10.4
+
+
+From 0ea07906aa5ecc3ccbfe48e4c6defdedc378760a Mon Sep 17 00:00:00 2001
+From: Franco Rapetti <frapeti@gmail.com>
+Date: Tue, 26 Nov 2013 21:32:48 -0200
+Subject: [PATCH 3/4] get BluetoothManager to ask about bt headset (KK
+ implementation)
+
+---
+ src/com/android/phone/PhoneUtils.java |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/src/com/android/phone/PhoneUtils.java b/src/com/android/phone/PhoneUtils.java
+index d5cee0b..230ca3b 100644
+--- a/src/com/android/phone/PhoneUtils.java
++++ b/src/com/android/phone/PhoneUtils.java
+@@ -2805,8 +2805,11 @@ public class PhoneUtils {
+         PhoneGlobals app = PhoneGlobals.getInstance();
+         AudioManager audioManager = (AudioManager) app.getSystemService(Context.AUDIO_SERVICE);
+         // determine actual streamType
++        
++        final BluetoothManager btManager = app.getBluetoothManager();
++        
+         int streamType = AudioManager.STREAM_VOICE_CALL;
+-        if (app.isBluetoothHeadsetAudioOn()) {
++        if (btManager.isBluetoothHeadsetAudioOn()) {
+             streamType = AudioManager.STREAM_BLUETOOTH_SCO;
+         }
+         // determine volume and 1 level lower volume (lowest level can be 0)
+-- 
+1.7.10.4
+
+
+From fb882640d173d3f5c6313032d60b16c35875da99 Mon Sep 17 00:00:00 2001
+From: Alberto Pedron <albertop2197@gmail.com>
+Date: Sun, 15 Dec 2013 14:57:03 +0100
+Subject: [PATCH 4/4] Oops
+
+---
+ src/com/android/phone/PhoneUtils.java |   25 -------------------------
+ 1 file changed, 25 deletions(-)
+
+diff --git a/src/com/android/phone/PhoneUtils.java b/src/com/android/phone/PhoneUtils.java
+index 230ca3b..5bb8bc8 100644
+--- a/src/com/android/phone/PhoneUtils.java
++++ b/src/com/android/phone/PhoneUtils.java
+@@ -2766,31 +2766,6 @@ public class PhoneUtils {
+                 == Configuration.ORIENTATION_LANDSCAPE;
+     }
+ 
+-    static class PhoneSettings {
+-        /* vibration preferences */
+-        static boolean vibOn45Secs(Context context) {
+-            return getPrefs(context).getBoolean("button_vibrate_45", false);
+-        }
+-        static boolean vibHangup(Context context) {
+-            return getPrefs(context).getBoolean("button_vibrate_hangup", false);
+-        }
+-        static boolean vibOutgoing(Context context) {
+-            return getPrefs(context).getBoolean("button_vibrate_outgoing", false);
+-        }
+-        static boolean vibCallWaiting(Context context) {
+-            return getPrefs(context).getBoolean("button_vibrate_call_waiting", false);
+-        }
+-
+-        /* misc. UI and behaviour preferences */
+-        static boolean showInCallEvents(Context context) {
+-            return getPrefs(context).getBoolean("button_show_ssn_key", false);
+-        }
+-
+-        private static SharedPreferences getPrefs(Context context) {
+-            return PreferenceManager.getDefaultSharedPreferences(context);
+-        }
+-    }
+-    
+      /**
+      * Reset the audio stream volume to fix the low in-call volume bug.
+      *
+-- 
+1.7.10.4
+
