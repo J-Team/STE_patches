@@ -5,6 +5,7 @@ rm -rf frameworks/native
 rm -rf hardware/libhardware_legacy
 rm -rf packages/services/Telephony
 rm -rf art
+rm -rf build
 
 repo sync
 
@@ -71,3 +72,11 @@ rm 1.patch
 rm 2.patch
 rm 3.patch
 cd ..
+
+echo "Applying Oliver patches - android_frameworks_av"
+cp patches/build.patch build/build.patch
+cd build
+git apply build.patch
+rm build.patch
+cd ..
+
