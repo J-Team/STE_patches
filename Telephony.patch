@@ -41,7 +41,7 @@ index 2d44977..d5cee0b 100644
 +            return PreferenceManager.getDefaultSharedPreferences(context);
 +        }
 +    }
-+    
++
 +     /**
 +     * Reset the audio stream volume to fix the low in-call volume bug.
 +     *
@@ -94,7 +94,7 @@ index 3c8e9d3..1d136a2 100644
          if (doNotify) {
              notifyListeners();
          }
-+        
++
 +        // Fix for low in-call volume bug.
 +        // Reset the audio volume stream after switching audio mode
 +        PhoneUtils.resetAudioStreamVolume();
@@ -123,9 +123,9 @@ index d5cee0b..230ca3b 100644
          PhoneGlobals app = PhoneGlobals.getInstance();
          AudioManager audioManager = (AudioManager) app.getSystemService(Context.AUDIO_SERVICE);
          // determine actual streamType
-+        
++
 +        final BluetoothManager btManager = app.getBluetoothManager();
-+        
++
          int streamType = AudioManager.STREAM_VOICE_CALL;
 -        if (app.isBluetoothHeadsetAudioOn()) {
 +        if (btManager.isBluetoothHeadsetAudioOn()) {
