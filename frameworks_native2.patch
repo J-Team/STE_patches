@@ -1,0 +1,19 @@
+commit 75ecfd7566c69a82597a9b13806b3ea768327a85
+Author: Franco Rapetti <frapeti@gmail.com>
+Date:   Wed Dec 11 16:44:14 2013 -0200
+
+    ops (#)
+
+diff --git a/include/ui/Region.h b/include/ui/Region.h
+index 7cbbe75..fb9783a 100644
+--- a/include/ui/Region.h
++++ b/include/ui/Region.h
+@@ -25,7 +25,7 @@
+ #include <ui/Rect.h>
+ #include <utils/Flattenable.h>
+ 
+-ifdef STE_HARDWARE
++#ifdef STE_HARDWARE
+ #include <hardware/copybit.h>
+ #endif
+ 
