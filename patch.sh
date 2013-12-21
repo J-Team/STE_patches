@@ -76,7 +76,7 @@ rm 2.patch
 rm 3.patch
 cd ..
 
-echo "Applying Oliver patches - android_frameworks_av"
+echo "Applying build patche - build: Add SKIP_SET_METADATA flag"
 cp patches/build.patch build/build.patch
 cd build
 git apply build.patch
