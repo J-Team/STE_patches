@@ -69,11 +69,11 @@ cd ..
 
 echo ""
 
-echo "Applying build patch - build: Add SKIP_SET_METADATA flag"
-cp patches/build.patch build/build.patch
-cd build
-git apply build.patch
-rm build.patch
-cd ..
+# echo "Applying build patch - build: Add SKIP_SET_METADATA flag"
+# cp patches/build.patch build/build.patch
+# cd build
+# git apply build.patch
+# rm build.patch
+# cd ..
 
-echo ""
+# echo ""
