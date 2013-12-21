@@ -38,7 +38,7 @@ index a5fdfb9..22bccce 100644
 +    // Method for closing copybit device while abandoning the surface
 +    virtual ~GLConsumer();
 +#endif
-+			
++
      // updateTexImage acquires the most recently queued buffer, and sets the
      // image contents of the target texture to it.
      //
@@ -53,7 +53,7 @@ index a5fdfb9..22bccce 100644
 +    // converts buffer to a suitable color format
 +    status_t convert(sp<GraphicBuffer> &srcBuf, sp<GraphicBuffer> &dstBuf);
 +#endif
-+			
++
      // freeBufferLocked frees up the given buffer slot.  If the slot has been
      // initialized this will release the reference to the GraphicBuffer in that
      // slot and destroy the EGLImage in that slot.  Otherwise it has no effect.
@@ -310,7 +310,7 @@ index 7ee3081..6b99a10 100644
 +        textureBuffer = mSlots[buf].mGraphicBuffer;
 +    }
 +#endif
-+ 
++
      if (mEglSlots[buf].mEglImage == EGL_NO_IMAGE_KHR) {
          EGLImageKHR image = createImage(mEglDisplay,
                  mSlots[buf].mGraphicBuffer, item.mCrop);
