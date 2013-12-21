@@ -38,15 +38,6 @@ git apply vibrator_fix.patch
 rm vibrator_fix.patch
 cd ../..
 
-
-echo ""
-
-echo "Cherrypicking Oliver patches - android_system_core"
-cd system/core
-git fetch http://review.cyanogenmod.org/CyanogenMod/android_system_core refs/changes/34/52034/2
-git cherry-pick FETCH_HEAD
-cd ../..
-
 echo ""
 
 echo "[PATCH 1/3] Port incall volume workaround to cm11 - q"
