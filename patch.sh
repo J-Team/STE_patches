@@ -20,9 +20,12 @@ echo ""
 
 echo "Applying Oliver patches - android_frameworks_native"
 cp patches/frameworks_native.patch frameworks/native/frameworks_native.patch
+cp patches/frameworks_native2.patch frameworks/native/frameworks_native2.patch
 cd frameworks/native
 git apply frameworks_native.patch
+git apply frameworks_native2.patch
 rm frameworks_native.patch
+rm frameworks_native2.patch
 cd ../..
 
 echo ""
