@@ -6,6 +6,7 @@ rm -rf hardware/libhardware_legacy
 rm -rf packages/services/Telephony
 rm -rf art
 #rm -rf build
+rm -rf frameworks/opt/telephony
 
 repo sync
 
@@ -76,4 +77,13 @@ echo ""
 # rm build.patch
 # cd ..
 
-# echo ""
+echo "frameworks/opt/telephony fix"
+cp patches/opttelephony.patch frameworks/opt/telephony/opttelephony.patch
+cd frameworks/opt/telephony
+git apply opttelephony.patch
+rm opttelephony.patch
+cd ../../..
+
+echo ""
+
+
