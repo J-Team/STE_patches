@@ -5,7 +5,7 @@ rm -rf frameworks/native
 rm -rf hardware/libhardware_legacy
 rm -rf packages/services/Telephony
 rm -rf art
-rm -rf build
+#rm -rf build
 
 repo sync
 
