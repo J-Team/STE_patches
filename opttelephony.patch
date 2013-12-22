@@ -1,0 +1,100 @@
+diff --git a/src/java/com/android/internal/telephony/BaseCommands.java b/src/java/com/android/internal/telephony/BaseCommands.java
+index a082ca7..47e12c9 100644
+--- a/src/java/com/android/internal/telephony/BaseCommands.java
++++ b/src/java/com/android/internal/telephony/BaseCommands.java
+@@ -740,9 +740,4 @@ public abstract class BaseCommands implements CommandsInterface {
+     public int getLteOnGsmMode() {
+         return TelephonyManager.getLteOnGsmModeStatic();
+     }
+-
+-    @Override
+-    public int getRilVersion() {
+-        return mRilVersion;
+-    }
+ }
+diff --git a/src/java/com/android/internal/telephony/CommandsInterface.java b/src/java/com/android/internal/telephony/CommandsInterface.java
+index 0e50b19..a086da7 100644
+--- a/src/java/com/android/internal/telephony/CommandsInterface.java
++++ b/src/java/com/android/internal/telephony/CommandsInterface.java
+@@ -1561,12 +1561,6 @@ public interface CommandsInterface {
+     public int getLteOnCdmaMode();
+ 
+     /**
+-     * Return if the current radio is LTE on GSM
+-     * @hide
+-     */
+-    public int getLteOnGsmMode();
+-
+-    /**
+      * Request the ISIM application on the UICC to perform the AKA
+      * challenge/response algorithm for IMS authentication. The nonce string
+      * and challenge response are Base64 encoded Strings.
+diff --git a/src/java/com/android/internal/telephony/Phone.java b/src/java/com/android/internal/telephony/Phone.java
+index 35c5f94..0e9dcc1 100644
+--- a/src/java/com/android/internal/telephony/Phone.java
++++ b/src/java/com/android/internal/telephony/Phone.java
+@@ -1668,12 +1668,6 @@ public interface Phone {
+     public int getLteOnCdmaMode();
+ 
+     /**
+-     * Return if the current radio is LTE on GSM
+-     * @hide
+-     */
+-    public int getLteOnGsmMode();
+-
+-    /**
+      * TODO: Adding a function for each property is not good.
+      * A fucntion of type getPhoneProp(propType) where propType is an
+      * enum of GSM+CDMA+LTE props would be a better approach.
+diff --git a/src/java/com/android/internal/telephony/PhoneBase.java b/src/java/com/android/internal/telephony/PhoneBase.java
+index 9ab3a6e..4208326 100644
+--- a/src/java/com/android/internal/telephony/PhoneBase.java
++++ b/src/java/com/android/internal/telephony/PhoneBase.java
+@@ -1338,14 +1338,6 @@ public abstract class PhoneBase extends Handler implements Phone {
+     }
+ 
+     /**
+-     * {@hide}
+-     */
+-    @Override
+-    public int getLteOnGsmMode() {
+-        return mCi.getLteOnGsmMode();
+-    }
+-
+-    /**
+      * Sets the SIM voice message waiting indicator records.
+      * @param line GSM Subscriber Profile Number, one-based. Only '1' is supported
+      * @param countWaiting The number of messages waiting, if known. Use
+diff --git a/src/java/com/android/internal/telephony/PhoneFactory.java b/src/java/com/android/internal/telephony/PhoneFactory.java
+index fa5ef0d..e6fb808 100644
+--- a/src/java/com/android/internal/telephony/PhoneFactory.java
++++ b/src/java/com/android/internal/telephony/PhoneFactory.java
+@@ -107,9 +107,6 @@ public class PhoneFactory {
+                 if (TelephonyManager.getLteOnCdmaModeStatic() == PhoneConstants.LTE_ON_CDMA_TRUE) {
+                     preferredNetworkMode = Phone.NT_MODE_GLOBAL;
+                 }
+-                if (TelephonyManager.getLteOnGsmModeStatic() != 0) {
+-                    preferredNetworkMode = Phone.NT_MODE_LTE_GSM_WCDMA;
+-                }
+                 int networkMode = Settings.Global.getInt(context.getContentResolver(),
+                         Settings.Global.PREFERRED_NETWORK_MODE, preferredNetworkMode);
+                 Rlog.i(LOG_TAG, "Network Mode set to " + Integer.toString(networkMode));
+diff --git a/src/java/com/android/internal/telephony/PhoneProxy.java b/src/java/com/android/internal/telephony/PhoneProxy.java
+index 22dbfb6..4c24a4a 100644
+--- a/src/java/com/android/internal/telephony/PhoneProxy.java
++++ b/src/java/com/android/internal/telephony/PhoneProxy.java
+@@ -1150,14 +1150,6 @@ public class PhoneProxy extends Handler implements Phone {
+         return mActivePhone.getLteOnCdmaMode();
+     }
+ 
+-    /**
+-     * {@hide}
+-     */
+-    @Override
+-    public int getLteOnGsmMode() {
+-        return mActivePhone.getLteOnGsmMode();
+-    }
+-
+     @Override
+     public void setVoiceMessageWaiting(int line, int countWaiting) {
+         mActivePhone.setVoiceMessageWaiting(line, countWaiting);
