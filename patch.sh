@@ -40,14 +40,14 @@ cd ../..
 
 echo ""
 
-echo "[PATCH 1/3] Port incall volume workaround to cm11 - q"
-echo "[PATCH 2/3] reset the audio volume stream after switching audio mode"
-echo "[PATCH 3/3] get BluetoothManager to ask about bt headset (KK implementation)"
-cp patches/Telephony.patch packages/services/Telephony/Telephony.patch
-cd packages/services/Telephony
-git apply Telephony.patch
-rm Telephony.patch
-cd ../../..
+#echo "[PATCH 1/3] Port incall volume workaround to cm11 - q"
+#echo "[PATCH 2/3] reset the audio volume stream after switching audio mode"
+#echo "[PATCH 3/3] get BluetoothManager to ask about bt headset (KK implementation)"
+#cp patches/Telephony.patch packages/services/Telephony/Telephony.patch
+#cd packages/services/Telephony
+#git apply Telephony.patch
+#rm Telephony.patch
+#cd ../../..
 
 echo ""
 
