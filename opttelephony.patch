@@ -1,22 +1,31 @@
+commit a4a85331f1d758c98b244f5be144421b40788bea
+Author: Alberto97 <albertop2197@gmail.com>
+Date:   Sun Dec 22 20:55:51 2013 +0100
+
+    Revert Telephony: Add getLteOnGsmMode() method (2/2)
+
 diff --git a/src/java/com/android/internal/telephony/BaseCommands.java b/src/java/com/android/internal/telephony/BaseCommands.java
-index a082ca7..47e12c9 100644
+index f224432..4155c97 100644
 --- a/src/java/com/android/internal/telephony/BaseCommands.java
 +++ b/src/java/com/android/internal/telephony/BaseCommands.java
-@@ -740,9 +740,4 @@ public abstract class BaseCommands implements CommandsInterface {
-     public int getLteOnGsmMode() {
-         return TelephonyManager.getLteOnGsmModeStatic();
+@@ -747,12 +747,4 @@ public abstract class BaseCommands implements CommandsInterface {
+     public int getRilVersion() {
+         return mRilVersion;
      }
 -
+-    /**
+-     * @hide
+-     */
 -    @Override
--    public int getRilVersion() {
--        return mRilVersion;
+-    public int getLteOnGsmMode() {
+-        return TelephonyManager.getLteOnGsmModeStatic();
 -    }
  }
 diff --git a/src/java/com/android/internal/telephony/CommandsInterface.java b/src/java/com/android/internal/telephony/CommandsInterface.java
-index 0e50b19..a086da7 100644
+index c89469b..f1ee23e 100644
 --- a/src/java/com/android/internal/telephony/CommandsInterface.java
 +++ b/src/java/com/android/internal/telephony/CommandsInterface.java
-@@ -1561,12 +1561,6 @@ public interface CommandsInterface {
+@@ -1623,12 +1623,6 @@ public interface CommandsInterface {
      public int getLteOnCdmaMode();
  
      /**
@@ -30,10 +39,10 @@ index 0e50b19..a086da7 100644
       * challenge/response algorithm for IMS authentication. The nonce string
       * and challenge response are Base64 encoded Strings.
 diff --git a/src/java/com/android/internal/telephony/Phone.java b/src/java/com/android/internal/telephony/Phone.java
-index 35c5f94..0e9dcc1 100644
+index c42beda..f4e26ea 100644
 --- a/src/java/com/android/internal/telephony/Phone.java
 +++ b/src/java/com/android/internal/telephony/Phone.java
-@@ -1668,12 +1668,6 @@ public interface Phone {
+@@ -1664,12 +1664,6 @@ public interface Phone {
      public int getLteOnCdmaMode();
  
      /**
@@ -47,10 +56,10 @@ index 35c5f94..0e9dcc1 100644
       * A fucntion of type getPhoneProp(propType) where propType is an
       * enum of GSM+CDMA+LTE props would be a better approach.
 diff --git a/src/java/com/android/internal/telephony/PhoneBase.java b/src/java/com/android/internal/telephony/PhoneBase.java
-index 9ab3a6e..4208326 100644
+index ef65d11..3e5bc4a 100644
 --- a/src/java/com/android/internal/telephony/PhoneBase.java
 +++ b/src/java/com/android/internal/telephony/PhoneBase.java
-@@ -1338,14 +1338,6 @@ public abstract class PhoneBase extends Handler implements Phone {
+@@ -1383,14 +1383,6 @@ public abstract class PhoneBase extends Handler implements Phone {
      }
  
      /**
@@ -66,10 +75,10 @@ index 9ab3a6e..4208326 100644
       * @param line GSM Subscriber Profile Number, one-based. Only '1' is supported
       * @param countWaiting The number of messages waiting, if known. Use
 diff --git a/src/java/com/android/internal/telephony/PhoneFactory.java b/src/java/com/android/internal/telephony/PhoneFactory.java
-index fa5ef0d..e6fb808 100644
+index b3d5235..7e9dd4c 100644
 --- a/src/java/com/android/internal/telephony/PhoneFactory.java
 +++ b/src/java/com/android/internal/telephony/PhoneFactory.java
-@@ -107,9 +107,6 @@ public class PhoneFactory {
+@@ -106,9 +106,6 @@ public class PhoneFactory {
                  if (TelephonyManager.getLteOnCdmaModeStatic() == PhoneConstants.LTE_ON_CDMA_TRUE) {
                      preferredNetworkMode = Phone.NT_MODE_GLOBAL;
                  }
@@ -80,10 +89,10 @@ index fa5ef0d..e6fb808 100644
                          Settings.Global.PREFERRED_NETWORK_MODE, preferredNetworkMode);
                  Rlog.i(LOG_TAG, "Network Mode set to " + Integer.toString(networkMode));
 diff --git a/src/java/com/android/internal/telephony/PhoneProxy.java b/src/java/com/android/internal/telephony/PhoneProxy.java
-index 22dbfb6..4c24a4a 100644
+index ad4090f..ff034f8 100644
 --- a/src/java/com/android/internal/telephony/PhoneProxy.java
 +++ b/src/java/com/android/internal/telephony/PhoneProxy.java
-@@ -1150,14 +1150,6 @@ public class PhoneProxy extends Handler implements Phone {
+@@ -1168,14 +1168,6 @@ public class PhoneProxy extends Handler implements Phone {
          return mActivePhone.getLteOnCdmaMode();
      }
  
