@@ -6,6 +6,7 @@ rm -rf hardware/libhardware_legacy
 rm -rf packages/services/Telephony
 rm -rf art
 rm -rf frameworks/opt/telephony
+rm -rf frameworks/base/telephony/java
 
 repo sync
 
@@ -40,15 +41,6 @@ cd ../..
 
 echo ""
 
-echo "Remove getLteOnGsmMode() (1/2)"
-cp patches/packages_services_telephony.patch packages/services/Telephony/packages_services_telephony.patch
-cd packages/services/Telephony
-git apply packages_services_telephony.patch
-rm packages_services_telephony.patch
-cd ../../..
-
-echo ""
-
 echo "ART fix"
 echo "[PATCH 1/3] runtime: Add support for dexroot-on-cache"
 echo "[PATCH 2/3] runtime: dexroot-on-cache: obey dalvik.vm.dexopt-data-only"
@@ -67,7 +59,16 @@ cd ..
 
 echo ""
 
-echo "Remove getLteOnGsmMode() (2/2)"
+echo "Remove getLteOnGsmMode() (1/3)"
+cp patches/packages_services_telephony.patch packages/services/Telephony/packages_services_telephony.patch
+cd packages/services/Telephony
+git apply packages_services_telephony.patch
+rm packages_services_telephony.patch
+cd ../../..
+
+echo ""
+
+echo "Remove getLteOnGsmMode() (2/3)"
 cp patches/framework_opt_telephony.patch frameworks/opt/telephony/framework_opt_telephony.patch
 cd frameworks/opt/telephony
 git apply framework_opt_telephony.patch
@@ -76,4 +77,11 @@ cd ../../..
 
 echo ""
 
+echo "Remove getLteOnGsmMode() (3/3)"
+cp patches/frameworks_base.patch frameworks/base/frameworks_base.patch
+cd frameworks/base
+git apply frameworks_base.patch
+rm frameworks_base.patch
+cd ../..
 
+echo ""
