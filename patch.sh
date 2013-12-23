@@ -6,7 +6,7 @@ rm -rf hardware/libhardware_legacy
 rm -rf packages/services/Telephony
 rm -rf art
 rm -rf frameworks/opt/telephony
-rm -rf frameworks/base/telephony/java
+rm -rf frameworks/base
 
 repo sync
 
