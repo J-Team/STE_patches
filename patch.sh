@@ -1,12 +1,12 @@
 #!/bin/bash
 
-rm -rf frameworks/av
-rm -rf frameworks/native
-rm -rf hardware/libhardware_legacy
-rm -rf packages/services/Telephony
-rm -rf art
-rm -rf frameworks/opt/telephony
-rm -rf frameworks/base
+rm -r frameworks/av
+rm -r frameworks/native
+rm -r hardware/libhardware_legacy
+rm -r packages/services/Telephony
+rm -r art
+rm -r frameworks/opt/telephony
+rm -r frameworks/base
 
 repo sync
 
@@ -59,7 +59,7 @@ cd ..
 
 echo ""
 
-echo "Remove getLteOnGsmMode() (1/3)"
+echo "Remove getLteOnGsmMode() (1/3) - packages_services_Telephony"
 cp patches/packages_services_telephony.patch packages/services/Telephony/packages_services_telephony.patch
 cd packages/services/Telephony
 git apply packages_services_telephony.patch
@@ -68,7 +68,7 @@ cd ../../..
 
 echo ""
 
-echo "Remove getLteOnGsmMode() (2/3)"
+echo "Remove getLteOnGsmMode() (2/3) - frameworks_opt_telephony"
 cp patches/framework_opt_telephony.patch frameworks/opt/telephony/framework_opt_telephony.patch
 cd frameworks/opt/telephony
 git apply framework_opt_telephony.patch
@@ -77,7 +77,7 @@ cd ../../..
 
 echo ""
 
-echo "Remove getLteOnGsmMode() (3/3)"
+echo "Remove getLteOnGsmMode() (3/3) - frameworks_base"
 cp patches/frameworks_base.patch frameworks/base/frameworks_base.patch
 cd frameworks/base
 git apply frameworks_base.patch
