@@ -5,6 +5,7 @@ rm -r frameworks/native
 rm -r hardware/libhardware_legacy
 rm -r art
 rm -r packages/services/Telephony
+rm -r packages/apps/ScreenRecorder
 
 repo sync
 
@@ -64,6 +65,15 @@ cp patches/Telephony.patch packages/services/Telephony/Telephony.patch
 cd packages/services/Telephony
 git apply Telephony.patch
 rm Telephony.patch
+cd ../../..
+
+echo ""
+
+echo "Remove Audio Support from ScreenRecorder app"
+cp patches/ScreenRecorder.patch packages/apps/ScreenRecorder/ScreenRecorder.patch
+cd packages/apps/ScreenRecorder
+git apply ScreenRecorder.patch
+rm ScreenRecorder.patch
 cd ../../..
 
 echo ""

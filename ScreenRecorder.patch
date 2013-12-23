@@ -1,0 +1,44 @@
+commit a697351a00c40b24575d7033377e4ada5ddec8c3
+Author: Alberto97 <albertop2197@gmail.com>
+Date:   Mon Dec 23 22:40:18 2013 +0100
+
+    Revert "Screen recorder: add ability to record audio from mic [3/3]"
+    
+    This reverts commit 10866dcd8fc161cca55e6b3bc0470722722a2dc9.
+
+diff --git a/src/org/chameleonos/screenrecorder/ScreenRecorderService.java b/src/org/chameleonos/screenrecorder/ScreenRecorderService.java
+index 57a8cf7..caad8bb 100644
+--- a/src/org/chameleonos/screenrecorder/ScreenRecorderService.java
++++ b/src/org/chameleonos/screenrecorder/ScreenRecorderService.java
+@@ -111,14 +111,11 @@ public class ScreenRecorderService extends IntentService
+         final ContentResolver resolver = getContentResolver();
+         final Resources res = getResources();
+ 
+-        final int[] dimensions = getVideoDimensions(res, display);
+-        final int bitRate = Settings.System.getInt(resolver,
++        int[] dimensions = getVideoDimensions(res, display);
++        int bitRate = Settings.System.getInt(getContentResolver(),
+                 Settings.System.SCREEN_RECORDER_BITRATE,
+                 res.getInteger(R.integer.config_screenRecorderFramerate));
+-        final boolean recordAudio = Settings.System.getInt(resolver,
+-                Settings.System.SCREEN_RECORDER_RECORD_AUDIO, 0) == 1;
+-
+-        sScreenRecorder.init(rotation, dimensions[0], dimensions[1], bitRate, 0, recordAudio);
++        sScreenRecorder.init(rotation, dimensions[0], dimensions[1], bitRate, 0);
+         File f = new File(RECORDER_PATH);
+         if (!f.exists()) {
+             if (!f.mkdir()) {
+@@ -143,12 +140,7 @@ public class ScreenRecorderService extends IntentService
+     /* Screen recorder callbacks */
+     @Override
+     public void onRecordingStarted() {
+-        final boolean recordAudio = Settings.System.getInt(getContentResolver(),
+-                Settings.System.SCREEN_RECORDER_RECORD_AUDIO, 0) == 1;
+-        // only play the start recording sound when only video is being recorded
+-        // otherwise the sound will be picked up by the mic and included which
+-        // isn't really desirable.
+-        if (!recordAudio) sActionSound.play(MediaActionSound.START_VIDEO_RECORDING);
++        sActionSound.play(MediaActionSound.START_VIDEO_RECORDING);
+         postRecordingNotification();
+     }
+ 
