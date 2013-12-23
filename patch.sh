@@ -5,7 +5,6 @@ rm -rf frameworks/native
 rm -rf hardware/libhardware_legacy
 rm -rf packages/services/Telephony
 rm -rf art
-#rm -rf build
 rm -rf frameworks/opt/telephony
 
 repo sync
@@ -41,14 +40,12 @@ cd ../..
 
 echo ""
 
-#echo "[PATCH 1/3] Port incall volume workaround to cm11 - q"
-#echo "[PATCH 2/3] reset the audio volume stream after switching audio mode"
-#echo "[PATCH 3/3] get BluetoothManager to ask about bt headset (KK implementation)"
-#cp patches/Telephony.patch packages/services/Telephony/Telephony.patch
-#cd packages/services/Telephony
-#git apply Telephony.patch
-#rm Telephony.patch
-#cd ../../..
+echo "Remove getLteOnGsmMode() (1/2)"
+cp patches/Telephony.patch packages/services/Telephony/Telephony.patch
+cd packages/services/Telephony
+git apply Telephony.patch
+rm Telephony.patch
+cd ../../..
 
 echo ""
 
@@ -70,18 +67,11 @@ cd ..
 
 echo ""
 
-# echo "Applying build patch - build: Add SKIP_SET_METADATA flag"
-# cp patches/build.patch build/build.patch
-# cd build
-# git apply build.patch
-# rm build.patch
-# cd ..
-
-echo "frameworks/opt/telephony fix"
-cp patches/opttelephony.patch frameworks/opt/telephony/opttelephony.patch
+echo "Remove getLteOnGsmMode() (2/2)"
+cp patches/framework_opt_telephony.patch frameworks/opt/telephony/opttelephony.patch
 cd frameworks/opt/telephony
-git apply opttelephony.patch
-rm opttelephony.patch
+git apply framework_opt_telephony.patch
+rm framework_opt_telephony.patch
 cd ../../..
 
 echo ""
