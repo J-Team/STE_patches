@@ -3,10 +3,10 @@
 rm -r frameworks/av
 rm -r frameworks/native
 rm -r hardware/libhardware_legacy
-rm -r packages/services/Telephony
+# rm -r packages/services/Telephony
 rm -r art
-rm -r frameworks/opt/telephony
-rm -r frameworks/base
+# rm -r frameworks/opt/telephony
+# rm -r frameworks/base
 
 repo sync
 
