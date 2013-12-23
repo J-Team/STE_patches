@@ -41,10 +41,10 @@ cd ../..
 echo ""
 
 echo "Remove getLteOnGsmMode() (1/2)"
-cp patches/Telephony.patch packages/services/Telephony/Telephony.patch
+cp patches/packages_services_telephony.patch packages/services/Telephony/packages_services_telephony.patch
 cd packages/services/Telephony
-git apply Telephony.patch
-rm Telephony.patch
+git apply packages_services_telephony.patch
+rm packages_services_telephony.patch
 cd ../../..
 
 echo ""
@@ -68,7 +68,7 @@ cd ..
 echo ""
 
 echo "Remove getLteOnGsmMode() (2/2)"
-cp patches/framework_opt_telephony.patch frameworks/opt/telephony/opttelephony.patch
+cp patches/framework_opt_telephony.patch frameworks/opt/telephony/framework_opt_telephony.patch
 cd frameworks/opt/telephony
 git apply framework_opt_telephony.patch
 rm framework_opt_telephony.patch
