@@ -1,0 +1,123 @@
+From efecec072abbaf187d1683e844b74e80c435297b Mon Sep 17 00:00:00 2001
+From: Srinu Jella <sjella@codeaurora.org>
+Date: Wed, 9 Oct 2013 16:03:43 +0530
+Subject: [PATCH 1/2] Bluetooth: SAP: Add SAP high security support to
+ Bluetooth APP
+
+This change consists of:
+High security authentication changes
+
+Change-Id: I08d4e411c31257794256a06447179229b0119e6a
+(cherry picked from commit 22644ac957306510f281d062fef0a0edf4cf7eee)
+(cherry picked from commit 9b8c9623f158073c2404d8e3e28fa1e01681a850)
+
+Conflicts:
+	src/com/android/bluetooth/btservice/RemoteDevices.java
+---
+ jni/com_android_bluetooth_btservice_AdapterService.cpp |    6 +++---
+ src/com/android/bluetooth/btservice/JniCallbacks.java  |    4 ++--
+ src/com/android/bluetooth/btservice/RemoteDevices.java |    5 +++--
+ 3 files changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/jni/com_android_bluetooth_btservice_AdapterService.cpp b/jni/com_android_bluetooth_btservice_AdapterService.cpp
+index 28de5ea..b6992e4 100644
+--- a/jni/com_android_bluetooth_btservice_AdapterService.cpp
++++ b/jni/com_android_bluetooth_btservice_AdapterService.cpp
+@@ -345,7 +345,7 @@ static void discovery_state_changed_callback(bt_discovery_state_t state) {
+     checkAndClearExceptionFromCallback(callbackEnv, __FUNCTION__);
+ }
+ 
+-static void pin_request_callback(bt_bdaddr_t *bd_addr, bt_bdname_t *bdname, uint32_t cod) {
++static void pin_request_callback(bt_bdaddr_t *bd_addr, bt_bdname_t *bdname, uint32_t cod, uint8_t secure) {
+     jbyteArray addr, devname;
+     if (!checkCallbackThread()) {
+        ALOGE("Callback: '%s' is not called on the correct thread", __FUNCTION__);
+@@ -365,7 +365,7 @@ static void pin_request_callback(bt_bdaddr_t *bd_addr, bt_bdname_t *bdname, uint
+ 
+     callbackEnv->SetByteArrayRegion(devname, 0, sizeof(bt_bdname_t), (jbyte*)bdname);
+ 
+-    callbackEnv->CallVoidMethod(sJniCallbacksObj, method_pinRequestCallback, addr, devname, cod);
++    callbackEnv->CallVoidMethod(sJniCallbacksObj, method_pinRequestCallback, addr, devname, cod, secure);
+ 
+     checkAndClearExceptionFromCallback(callbackEnv, __FUNCTION__);
+     callbackEnv->DeleteLocalRef(addr);
+@@ -478,7 +478,7 @@ static void classInitNative(JNIEnv* env, jclass clazz) {
+                                                             "([B[I[[B)V");
+     method_deviceFoundCallback = env->GetMethodID(jniCallbackClass, "deviceFoundCallback", "([B)V");
+     method_pinRequestCallback = env->GetMethodID(jniCallbackClass, "pinRequestCallback",
+-                                                 "([B[BI)V");
++                                                 "([B[BIZ)V");
+     method_sspRequestCallback = env->GetMethodID(jniCallbackClass, "sspRequestCallback",
+                                                  "([B[BIII)V");
+ 
+diff --git a/src/com/android/bluetooth/btservice/JniCallbacks.java b/src/com/android/bluetooth/btservice/JniCallbacks.java
+index ae619d9..3b42487 100644
+--- a/src/com/android/bluetooth/btservice/JniCallbacks.java
++++ b/src/com/android/bluetooth/btservice/JniCallbacks.java
+@@ -57,8 +57,8 @@ final class JniCallbacks {
+         mRemoteDevices.deviceFoundCallback(address);
+     }
+ 
+-    void pinRequestCallback(byte[] address, byte[] name, int cod) {
+-        mRemoteDevices.pinRequestCallback(address, name, cod);
++    void pinRequestCallback(byte[] address, byte[] name, int cod, boolean secure) {
++        mRemoteDevices.pinRequestCallback(address, name, cod, secure);
+     }
+ 
+     void bondStateChangeCallback(int status, byte[] address, int newState) {
+diff --git a/src/com/android/bluetooth/btservice/RemoteDevices.java b/src/com/android/bluetooth/btservice/RemoteDevices.java
+index f054df6..cdda2a5 100755
+--- a/src/com/android/bluetooth/btservice/RemoteDevices.java
++++ b/src/com/android/bluetooth/btservice/RemoteDevices.java
+@@ -324,7 +324,7 @@ final class RemoteDevices {
+         mAdapterService.sendBroadcast(intent, mAdapterService.BLUETOOTH_PERM);
+     }
+ 
+-    void pinRequestCallback(byte[] address, byte[] name, int cod) {
++    void pinRequestCallback(byte[] address, byte[] name, int cod, boolean secure) {
+         //TODO(BT): Get wakelock and update name and cod
+         BluetoothDevice bdDevice = getDevice(address);
+         if (bdDevice == null) {
+@@ -349,11 +349,12 @@ final class RemoteDevices {
+             return;
+         }
+         infoLog("pinRequestCallback: " + address + " name:" + name + " cod:" +
+-                cod);
++                cod + "secure" + secure );
+         Intent intent = new Intent(BluetoothDevice.ACTION_PAIRING_REQUEST);
+         intent.putExtra(BluetoothDevice.EXTRA_DEVICE, getDevice(address));
+         intent.putExtra(BluetoothDevice.EXTRA_PAIRING_VARIANT,
+                 BluetoothDevice.PAIRING_VARIANT_PIN);
++        intent.putExtra(BluetoothDevice.EXTRA_SECURE_PAIRING, secure);
+         mAdapterService.sendOrderedBroadcast(intent, mAdapterService.BLUETOOTH_ADMIN_PERM);
+         return;
+     }
+-- 
+1.7.10.4
+
+
+From dd1f348c5a8cfbbf8fbdc5feeb9804fb51469309 Mon Sep 17 00:00:00 2001
+From: Alberto97 <albertop2197@gmail.com>
+Date: Thu, 26 Dec 2013 20:31:01 +0100
+Subject: [PATCH 2/2] Fix Bluetooth build
+
+---
+ src/com/android/bluetooth/btservice/RemoteDevices.java |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/com/android/bluetooth/btservice/RemoteDevices.java b/src/com/android/bluetooth/btservice/RemoteDevices.java
+index cdda2a5..cd5482b 100755
+--- a/src/com/android/bluetooth/btservice/RemoteDevices.java
++++ b/src/com/android/bluetooth/btservice/RemoteDevices.java
+@@ -354,7 +354,7 @@ final class RemoteDevices {
+         intent.putExtra(BluetoothDevice.EXTRA_DEVICE, getDevice(address));
+         intent.putExtra(BluetoothDevice.EXTRA_PAIRING_VARIANT,
+                 BluetoothDevice.PAIRING_VARIANT_PIN);
+-        intent.putExtra(BluetoothDevice.EXTRA_SECURE_PAIRING, secure);
++        //intent.putExtra(BluetoothDevice.EXTRA_SECURE_PAIRING, secure);
+         mAdapterService.sendOrderedBroadcast(intent, mAdapterService.BLUETOOTH_ADMIN_PERM);
+         return;
+     }
+-- 
+1.7.10.4
+
