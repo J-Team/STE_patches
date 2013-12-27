@@ -1,16 +1,16 @@
-commit cb943097d4080d4c99383f581c37a7c330c93f1c
-Author: KINGbabasula <kingbabasula@gmail.com>
-Date:   Fri Dec 13 15:34:43 2013 +0100
+commit 9299ccdfc30c6d2b1175ad147fe846fb7494fde7
+Author: Alberto97 <albertop2197@gmail.com>
+Date:   Fri Dec 27 14:56:18 2013 +0100
 
-    Low incall volume workaround
+    AOSP Low incall volume workaround
     
-    Change-Id: I8d81a114c45cd97b29d1498503aa99ba59f88a75
+    Change-Id: Ie65adef1f0b3d2db79da958c99a3b023bb3f6833
 
 diff --git a/src/com/android/phone/InCallScreen.java b/src/com/android/phone/InCallScreen.java
-index d6ab777..16474dc 100644
+index d5db689..8884a07 100755
 --- a/src/com/android/phone/InCallScreen.java
 +++ b/src/com/android/phone/InCallScreen.java
-@@ -1962,6 +1962,12 @@ public class InCallScreen extends Activity
+@@ -1650,6 +1650,12 @@ public class InCallScreen extends Activity
          // Make sure we update the poke lock and wake lock when certain
          // phone state changes occur.
          mApp.updateWakeState();
@@ -23,7 +23,7 @@ index d6ab777..16474dc 100644
      }
  
      /**
-@@ -3158,6 +3164,10 @@ public class InCallScreen extends Activity
+@@ -2790,6 +2796,10 @@ public class InCallScreen extends Activity
          }
          PhoneUtils.turnOnSpeaker(this, newSpeakerState, true);
  
@@ -34,7 +34,7 @@ index d6ab777..16474dc 100644
          // And update the InCallTouchUi widget (since the "audio mode"
          // button might need to change its appearance based on the new
          // audio state.)
-@@ -3210,6 +3220,10 @@ public class InCallScreen extends Activity
+@@ -2842,6 +2852,10 @@ public class InCallScreen extends Activity
              Log.w(LOG_TAG, "toggleBluetooth(): bluetooth is unavailable");
          }
  
@@ -45,7 +45,7 @@ index d6ab777..16474dc 100644
          // And update the InCallTouchUi widget (since the "audio mode"
          // button might need to change its appearance based on the new
          // audio state.)
-@@ -3274,6 +3288,10 @@ public class InCallScreen extends Activity
+@@ -2906,6 +2920,10 @@ public class InCallScreen extends Activity
                  break;
          }
  
@@ -57,14 +57,13 @@ index d6ab777..16474dc 100644
          // mode" button might need to change its appearance based on the
          // new audio state.)
 diff --git a/src/com/android/phone/PhoneUtils.java b/src/com/android/phone/PhoneUtils.java
-index 6b7b424..d05d9a9 100644
+index 4334962..9e50871 100644
 --- a/src/com/android/phone/PhoneUtils.java
 +++ b/src/com/android/phone/PhoneUtils.java
-@@ -2094,6 +2094,37 @@ public class PhoneUtils {
-         }
+@@ -1910,6 +1910,37 @@ public class PhoneUtils {
      }
  
-+    /**
+     /**
 +     * Reset the audio stream volume to fix the low in-call volume bug.
 +     *
 +     * Due to a bug in the OMX system, the audio stream volume is set to 0 after it was set to it's default volume.
@@ -95,6 +94,7 @@ index 6b7b424..d05d9a9 100644
 +        audioManager.setStreamVolume(streamType, volume, 0);
 +    }
 +
-     static void writePhoneAppStatus(Context context, boolean flag) {
-         String statusFile = context.getResources().getString(R.string.phone_app_status_file);
- 
++    /**
+      *
+      * Mute / umute the foreground phone, which has the current foreground call
+      *
