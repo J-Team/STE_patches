@@ -47,11 +47,13 @@ cd ../..
 echo ""
 
 echo "Cherrypicking Oliver patches - android_system_core"
+echo "Fix Charger.c build - android_system_core"
 cd system/core
 cp patches/system_core.patch system/core/system_core.patch
 cd system/core
 git apply system_core.patch
 rm system_core.patch
+git revert 5be34e65384afa9c334b3b2f729fe0391ae4b578
 cd ../..
 
 echo ""
