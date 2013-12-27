@@ -1,0 +1,24 @@
+commit 06d6c51c42ee34ce6d84c81e2354beec5d677acf
+Author: OliverG96 <oliverarafo@gmail.com>
+Date:   Sun Oct 20 12:04:12 2013 +0100
+
+    include: Add support for STE multimedia - Part 3
+    
+    Change-Id: If36cc36aa5328c0e85dfb99a07f2867bb94cca8e
+
+diff --git a/include/system/graphics.h b/include/system/graphics.h
+index ed493f5..dc447ca 100644
+--- a/include/system/graphics.h
++++ b/include/system/graphics.h
+@@ -213,6 +213,11 @@ enum {
+     HAL_PIXEL_FORMAT_YCbCr_422_SP       = 0x10, // NV16
+     HAL_PIXEL_FORMAT_YCrCb_420_SP       = 0x11, // NV21
+     HAL_PIXEL_FORMAT_YCbCr_422_I        = 0x14, // YUY2
++#ifdef STE_HARDWARE
++    HAL_PIXEL_FORMAT_YCBCR42XMBN        = 0xE,
++    HAL_PIXEL_FORMAT_YCbCr_420_P        = 0x13,
++    HAL_PIXEL_FORMAT_YCbCr_420_SP       = 0x21,
++#endif
+ };
+ 
+ /*
