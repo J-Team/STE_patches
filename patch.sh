@@ -4,6 +4,7 @@ rm -rf frameworks/av
 rm -rf frameworks/native
 rm -rf hardware/libhardware_legacy
 rm -rf packages/apps/Phone
+rm -rf system/core
 
 repo sync
 
@@ -47,6 +48,10 @@ echo ""
 
 echo "Cherrypicking Oliver patches - android_system_core"
 cd system/core
-git fetch http://review.cyanogenmod.org/CyanogenMod/android_system_core refs/changes/34/52034/2
-git cherry-pick FETCH_HEAD
+cp patches/system_core.patch system/core/system_core.patch
+cd system/core
+git apply system_core.patch
+rm system_core.patch
 cd ../..
+
+echo ""
