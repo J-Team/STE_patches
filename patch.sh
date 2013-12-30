@@ -6,6 +6,7 @@ rm -r hardware/libhardware_legacy
 rm -r art
 rm -r packages/services/Telephony
 rm -r packages/apps/ScreenRecorder
+rm -r packages/apps/Settings
 
 repo sync
 
