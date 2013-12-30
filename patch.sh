@@ -41,20 +41,11 @@ cd ../..
 
 echo ""
 
-echo "ART fix"
-#echo "[PATCH 1/3] runtime: Add support for dexroot-on-cache"
-#echo "[PATCH 2/3] runtime: dexroot-on-cache: obey dalvik.vm.dexopt-data-only"
-echo "[PATCH 3/3] verifier: Bypass monitor-{enter,exit} depth checks"
-#cp patches/art/1.patch art/1.patch
-#cp patches/art/2.patch art/2.patch
-cp patches/art/3.patch art/3.patch
+echo "verifier: Bypass monitor-{enter,exit} depth checks"
+cp patches/art.patch art/art.patch
 cd art
-#git apply 1.patch
-#git apply 2.patch
-git apply 3.patch
-#rm 1.patch
-#rm 2.patch
-rm 3.patch
+git apply art.patch
+rm art.patch
 cd ..
 
 echo ""
