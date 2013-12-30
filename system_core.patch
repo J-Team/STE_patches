@@ -1,0 +1,140 @@
+From 35ecc4076f02359e7236db1c17553386132efa6c Mon Sep 17 00:00:00 2001
+From: KINGbabasula <kingbabasula@gmail.com>
+Date: Sat, 21 Dec 2013 14:11:17 +0100
+Subject: [PATCH 1/4] Update Android.mk
+
+---
+ init/Android.mk |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/init/Android.mk b/init/Android.mk
+index de32d1d..854533e 100644
+--- a/init/Android.mk
++++ b/init/Android.mk
+@@ -45,7 +45,9 @@ endif
+ 
+ SYSTEM_CORE_INIT_DEFINES := BOARD_CHARGING_MODE_BOOTING_LPM \
+     BOARD_CHARGING_CMDLINE_NAME \
+-    BOARD_CHARGING_CMDLINE_VALUE
++    BOARD_CHARGING_CMDLINE_VALUE \
++    BOARD_LPM_BOOT_ARGUMENT_NAME \
++    BOARD_LPM_BOOT_ARGUMENT_VALUE
+ 
+ $(foreach system_core_init_define,$(SYSTEM_CORE_INIT_DEFINES), \
+   $(if $($(system_core_init_define)), \
+-- 
+1.7.10.4
+
+
+From 16b10b6850d40e23833deb17ef6cb72e1db1c4a5 Mon Sep 17 00:00:00 2001
+From: KINGbabasula <kingbabasula@gmail.com>
+Date: Sat, 21 Dec 2013 14:17:07 +0100
+Subject: [PATCH 2/4] Update init.c
+
+---
+ init/init.c |   13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/init/init.c b/init/init.c
+index ffd4d56..d05e06f 100644
+--- a/init/init.c
++++ b/init/init.c
+@@ -78,6 +78,11 @@ static int   bootchart_count;
+ #define BOARD_CHARGING_CMDLINE_VALUE "true"
+ #endif
+ 
++#ifndef BOARD_LPM_BOOT_ARGUMENT_NAME
++#define BOARD_LPM_BOOT_ARGUMENT_NAME "lpm_boot"
++#define BOARD_LPM_BOOT_ARGUMENT_VALUE "1"
++#endif
++
+ static char console[32];
+ static char bootmode[32];
+ static char hardware[32];
+@@ -107,6 +112,8 @@ static const char *ENV[32];
+ 
+ static unsigned emmc_boot = 0;
+ 
++static unsigned lpm_bootmode = 0;
++
+ static unsigned charging_mode = 0;
+ 
+ static const char *expand_environment(const char *val)
+@@ -814,6 +821,10 @@ static void import_kernel_nv(char *name, int for_emulator)
+             emmc_boot = 1;
+         }
+ #endif
++    } else if (!strcmp(name,BOARD_LPM_BOOT_ARGUMENT_NAME)) {
++        if (!strcmp(value,BOARD_LPM_BOOT_ARGUMENT_VALUE)) {
++            lpm_bootmode = 1;
++        }
+     } else if (!strcmp(name,BOARD_CHARGING_CMDLINE_NAME)) {
+         strlcpy(battchg_pause, value, sizeof(battchg_pause));
+     } else if (!strncmp(name, "androidboot.", 12) && name_len > 12) {
+@@ -1060,7 +1071,7 @@ int audit_callback(void *data, security_class_t cls, char *buf, size_t len)
+ static int charging_mode_booting(void)
+ {
+ #ifndef BOARD_CHARGING_MODE_BOOTING_LPM
+-    return 0;
++    return lpm_bootmode;
+ #else
+     int f;
+     char cmb;
+-- 
+1.7.10.4
+
+
+From 666b073293c48e36146ee9ee56298af820241a33 Mon Sep 17 00:00:00 2001
+From: KINGbabasula <kingbabasula@gmail.com>
+Date: Sat, 21 Dec 2013 14:18:44 +0100
+Subject: [PATCH 3/4] Update graphics.h
+
+---
+ include/system/graphics.h |    5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/include/system/graphics.h b/include/system/graphics.h
+index fd7b681..6a79ebd 100644
+--- a/include/system/graphics.h
++++ b/include/system/graphics.h
+@@ -240,6 +240,11 @@ enum {
+     HAL_PIXEL_FORMAT_YCbCr_422_SP       = 0x10, // NV16
+     HAL_PIXEL_FORMAT_YCrCb_420_SP       = 0x11, // NV21
+     HAL_PIXEL_FORMAT_YCbCr_422_I        = 0x14, // YUY2
++#ifdef STE_HARDWARE
++    HAL_PIXEL_FORMAT_YCBCR42XMBN        = 0xE,
++    HAL_PIXEL_FORMAT_YCbCr_420_P        = 0x13,
++    HAL_PIXEL_FORMAT_YCbCr_420_SP       = 0x21,
++#endif
+ };
+ 
+ /*
+-- 
+1.7.10.4
+
+
+From d8e5d1a17378c586f6b23946459640c28ba5ab3c Mon Sep 17 00:00:00 2001
+From: Alberto97 <albertop2197@gmail.com>
+Date: Mon, 30 Dec 2013 23:52:31 +0100
+Subject: [PATCH 4/4] Make switch off/reboot shorter
+
+Change-Id: I7bafad9341f27d5406287a6e8c54cc0c173186f5
+---
+ libcutils/android_reboot.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libcutils/android_reboot.c b/libcutils/android_reboot.c
+index 326d402..ab836ec 100644
+--- a/libcutils/android_reboot.c
++++ b/libcutils/android_reboot.c
+@@ -93,7 +93,7 @@ static void remount_ro(void)
+ 
+ 
+     /* Now poll /proc/mounts till it's done */
+-    while (!remount_ro_done() && (cnt < 3600)) {
++    while (!remount_ro_done() && (cnt < 50)) {
+         usleep(100000);
+         cnt++;
+     }
+-- 
+1.7.10.4
