@@ -6,7 +6,6 @@ rm -r hardware/libhardware_legacy
 rm -r art
 rm -r packages/services/Telephony
 rm -r packages/apps/ScreenRecorder
-rm -r packages/apps/Settings
 
 repo sync
 
@@ -84,16 +83,6 @@ cp patches/Settings.patch packages/apps/Settings/Settings.patch
 cd packages/apps/Settings
 git apply Settings.patch
 rm Settings.patch
-cd ../../..
-
-echo ""
-
-
-echo "Fix Bluetooth"
-cp patches/Bluetooth.patch packages/apps/Bluetooth/Bluetooth.patch
-cd packages/apps/Bluetooth
-git apply Bluetooth.patch
-rm Bluetooth.patch
 cd ../../..
 
 echo ""
