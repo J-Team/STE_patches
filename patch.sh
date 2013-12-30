@@ -7,6 +7,7 @@ rm -r art
 rm -r packages/services/Telephony
 rm -r packages/apps/ScreenRecorder
 rm -r packages/apps/Settings
+rm -r system/core
 
 repo sync
 
@@ -76,5 +77,14 @@ cd packages/apps/Settings
 git apply Settings.patch
 rm Settings.patch
 cd ../../..
+
+echo ""
+
+echo "system/core fix"
+cp patches/system_core.patch system/core/system_core.patch
+cd system/core
+git system_core.patch
+rm system_core.patch
+cd ../..
 
 echo ""
