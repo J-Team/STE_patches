@@ -83,7 +83,7 @@ echo ""
 echo "system/core fix"
 cp patches/system_core.patch system/core/system_core.patch
 cd system/core
-git system_core.patch
+git apply system_core.patch
 rm system_core.patch
 cd ../..
 
