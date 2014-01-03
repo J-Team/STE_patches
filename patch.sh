@@ -69,6 +69,7 @@ cd ../../..
 echo ""
 
 echo "Set from Settings ScreenRecorder app"
+echo "Port "Option to hide Adb notification icon" "
 cp patches/Settings.patch packages/apps/Settings/Settings.patch
 cd packages/apps/Settings
 git apply Settings.patch
