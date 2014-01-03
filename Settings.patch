@@ -315,3 +315,95 @@ index 0000000..c2ead05
 +                Integer.valueOf(value));
 +    }
 +}
+
+commit c72e916209b8d6de469c5397b9e32ac8ecc7f236
+Author: Tanguy Pruvot <tanguy.pruvot@gmail.com>
+Date:   Wed Nov 13 08:08:56 2013 -0500
+
+    Port "Option to hide Adb notification icon"
+    
+    Frameworks part is already in place
+    
+    Change-Id: I7c50e50be86c654c77d6c2a385860d97279ed621
+    
+    Conflicts:
+    	res/values/cm_strings.xml
+
+diff --git a/res/values/strings.xml b/res/values/strings.xml
+index 13f4242..6fe7c28 100644
+--- a/res/values/strings.xml
++++ b/res/values/strings.xml
+@@ -4945,4 +4945,8 @@
+     <string name="screen_recorder_bitrate_50000000">50000000</string>
+     <string name="screen_recorder_bitrate_100000000">100000000</string>
+ 
++    <!-- Setting checkbox summary for displaying USB debugging notification -->
++    <string name="adb_notify">USB debugging notify</string>
++    <string name="adb_notify_summary">Display a notification when USB debugging is connected</string>
++
+ </resources>
+diff --git a/res/xml/development_prefs.xml b/res/xml/development_prefs.xml
+index 5989c90..d924a07 100644
+--- a/res/xml/development_prefs.xml
++++ b/res/xml/development_prefs.xml
+@@ -70,6 +70,12 @@
+             android:title="@string/enable_adb"
+             android:summary="@string/enable_adb_summary"/>
+ 
++        <CheckBoxPreference
++            android:key="adb_notify"
++            android:title="@string/adb_notify"
++            android:summary="@string/adb_notify_summary"
++            android:dependency="enable_adb"/>
++
+         <Preference android:key="clear_adb_keys"
+                 android:title="@string/clear_adb_keys" />
+ 
+diff --git a/src/com/android/settings/DevelopmentSettings.java b/src/com/android/settings/DevelopmentSettings.java
+index f3a22ca..af93178 100644
+--- a/src/com/android/settings/DevelopmentSettings.java
++++ b/src/com/android/settings/DevelopmentSettings.java
+@@ -89,6 +89,7 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
+     public static final String PREF_SHOW = "show";
+ 
+     private static final String ENABLE_ADB = "enable_adb";
++    private static final String ADB_NOTIFY = "adb_notify";
+     private static final String CLEAR_ADB_KEYS = "clear_adb_keys";
+     private static final String ENABLE_TERMINAL = "enable_terminal";
+     private static final String KEEP_SCREEN_ON = "keep_screen_on";
+@@ -157,6 +158,7 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
+     private boolean mDontPokeProperties;
+ 
+     private CheckBoxPreference mEnableAdb;
++    private CheckBoxPreference mAdbNotify;
+     private Preference mClearAdbKeys;
+     private CheckBoxPreference mEnableTerminal;
+     private Preference mBugreport;
+@@ -237,6 +239,7 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
+                 findPreference(DEBUG_DEBUGGING_CATEGORY_KEY);
+ 
+         mEnableAdb = findAndInitCheckboxPref(ENABLE_ADB);
++        mAdbNotify = findAndInitCheckboxPref(ADB_NOTIFY);
+         mClearAdbKeys = findPreference(CLEAR_ADB_KEYS);
+         if (!SystemProperties.getBoolean("ro.adb.secure", false)) {
+             if (debugDebuggingCategory != null) {
+@@ -457,6 +460,8 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
+         mHaveDebugSettings = false;
+         updateCheckBox(mEnableAdb, Settings.Global.getInt(cr,
+                 Settings.Global.ADB_ENABLED, 0) != 0);
++        mAdbNotify.setChecked(Settings.Secure.getInt(cr,
++                Settings.Secure.ADB_NOTIFY, 1) != 0);
+         if (mEnableTerminal != null) {
+             updateCheckBox(mEnableTerminal,
+                     context.getPackageManager().getApplicationEnabledSetting(TERMINAL_APP_PACKAGE)
+@@ -1180,6 +1185,10 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
+                 mVerifyAppsOverUsb.setChecked(false);
+                 updateBugreportOptions();
+             }
++        } else if (preference == mAdbNotify) {
++            Settings.Secure.putInt(getActivity().getContentResolver(),
++                    Settings.Secure.ADB_NOTIFY,
++                    mAdbNotify.isChecked() ? 1 : 0);
+         } else if (preference == mClearAdbKeys) {
+             if (mAdbKeysDialog != null) dismissDialogs();
+             mAdbKeysDialog = new AlertDialog.Builder(getActivity())
