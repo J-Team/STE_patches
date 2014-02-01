@@ -8,6 +8,7 @@ rm -r packages/services/Telephony
 rm -r packages/apps/ScreenRecorder
 rm -r packages/apps/Settings
 rm -r system/core
+rm -r system/vold
 
 repo sync
 
@@ -83,6 +84,15 @@ cp patches/system_core.patch system/core/system_core.patch
 cd system/core
 git apply system_core.patch
 rm system_core.patch
+cd ../..
+
+echo ""
+
+echo "system/vold fix"
+cp patches/system_vold.patch system/vold/system_vold.patch
+cd system/vold
+git apply system_vold.patch
+rm system_vold.patch
 cd ../..
 
 echo ""
