@@ -154,7 +154,7 @@ index a5fdfb9..fda016d 100644
              bool useFenceSync = true, bool isControlledByApp = false);
  
 +#ifdef STE_HARDWARE
-+    // Method for closing copybit device while abandoning the surface 
++    // Method for closing copybit device while abandoning the surface
 +    virtual ~GLConsumer();
 +#endif
 +
