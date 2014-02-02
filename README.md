@@ -34,6 +34,6 @@ Commits:
     -https://github.com/TeamCanjica/android_packages_services_Telephony/commit/71f50ccbd4635eab517775eb87293e26380c962b
     -https://github.com/TeamCanjica/android_packages_services_Telephony/commit/ac1c893a194f0cea0d46d9f1423428deb9cc97d0
     
--vibrator_fix: 
+-vibrator_fix.patch: 
     -https://github.com/TeamCanjica/android_hardware_libhardware_legacy/commit/9c2250d32a1eda9afe3b5cefe3306104148aa532
 
