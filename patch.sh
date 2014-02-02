@@ -5,7 +5,6 @@ rm -r frameworks/native
 rm -r hardware/libhardware_legacy
 rm -r art
 rm -r packages/services/Telephony
-rm -r packages/apps/ScreenRecorder
 rm -r packages/apps/Settings
 rm -r system/core
 rm -r system/vold
@@ -60,16 +59,6 @@ cd ../../..
 
 echo ""
 
-echo "Remove Audio Support from ScreenRecorder app"
-cp patches/ScreenRecorder.patch packages/apps/ScreenRecorder/ScreenRecorder.patch
-cd packages/apps/ScreenRecorder
-git apply ScreenRecorder.patch
-rm ScreenRecorder.patch
-cd ../../..
-
-echo ""
-
-echo "Set from Settings ScreenRecorder app"
 echo "Port "Option to hide Adb notification icon" "
 cp patches/Settings.patch packages/apps/Settings/Settings.patch
 cd packages/apps/Settings
