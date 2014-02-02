@@ -8,6 +8,7 @@ How to patch:
 
 
 Commits:
+
 -art.patch: 
     -https://github.com/omnirom/android_art/commit/6cbd0fa2cc576e068498462bf5f58bb49fe5b55b
 
