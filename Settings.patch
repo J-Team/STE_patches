@@ -1,4 +1,4 @@
-commit c72e916209b8d6de469c5397b9e32ac8ecc7f236
+commit 408903984c49ada86f5183d782dd86117d80860f
 Author: Tanguy Pruvot <tanguy.pruvot@gmail.com>
 Date:   Wed Nov 13 08:08:56 2013 -0500
 
@@ -12,17 +12,17 @@ Date:   Wed Nov 13 08:08:56 2013 -0500
     	res/values/cm_strings.xml
 
 diff --git a/res/values/strings.xml b/res/values/strings.xml
-index 13f4242..6fe7c28 100644
+index cc9c267..9533d4d 100644
 --- a/res/values/strings.xml
 +++ b/res/values/strings.xml
-@@ -4945,4 +4945,8 @@
-     <string name="screen_recorder_bitrate_50000000">50000000</string>
-     <string name="screen_recorder_bitrate_100000000">100000000</string>
+@@ -4905,4 +4905,8 @@
  
+     <!-- Advanced, Device specific (DeviceParts) settings  -->
+     <string name="advanced_settings_title">Advanced</string>
++
 +    <!-- Setting checkbox summary for displaying USB debugging notification -->
 +    <string name="adb_notify">USB debugging notify</string>
 +    <string name="adb_notify_summary">Display a notification when USB debugging is connected</string>
-+
  </resources>
 diff --git a/res/xml/development_prefs.xml b/res/xml/development_prefs.xml
 index 5989c90..d924a07 100644
