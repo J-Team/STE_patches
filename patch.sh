@@ -5,7 +5,6 @@ rm -r frameworks/native
 rm -r hardware/libhardware_legacy
 rm -r art
 rm -r packages/services/Telephony
-rm -r packages/apps/Settings
 rm -r system/core
 rm -r system/vold
 
@@ -55,15 +54,6 @@ cp patches/Telephony.patch packages/services/Telephony/Telephony.patch
 cd packages/services/Telephony
 git apply Telephony.patch
 rm Telephony.patch
-cd ../../..
-
-echo ""
-
-echo "Port "Option to hide Adb notification icon" "
-cp patches/Settings.patch packages/apps/Settings/Settings.patch
-cd packages/apps/Settings
-git apply Settings.patch
-rm Settings.patch
 cd ../../..
 
 echo ""
