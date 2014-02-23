@@ -1,8 +1,8 @@
-commit deb4ee5c32da09e8e735a935914e6645cb72d4f3
+commit edfafa498b900e8ce139fb66e81161316e18ee39
 Author: Robert Rozic <rooobertinhooo@gmail.com>
-Date:   Fri Jan 24 17:48:34 2014 +0100
+Date:   Sun Feb 2 12:38:11 2014 +0100
 
-    STE OMX and Camera FIX
+    STE Multimedia Fix
 
 diff --git a/camera/CameraParameters.cpp b/camera/CameraParameters.cpp
 index 3be854e..6c9407d 100644
@@ -104,12 +104,12 @@ index 85ba920..e34791c 100644
  
      status_t convertQCOMYUV420SemiPlanar(
              const BitmapParams &src, const BitmapParams &dst);
-+
++			
 +#ifdef STE_HARDWARE
 +    status_t convertSTEYUV420PackedSemiPlanarMB(
 +            const BitmapParams &src, const BitmapParams &dst);
 +#endif
-
+ 
      status_t convertYUV420SemiPlanar(
              const BitmapParams &src, const BitmapParams &dst);
 diff --git a/include/media/stagefright/MediaDefs.h b/include/media/stagefright/MediaDefs.h
