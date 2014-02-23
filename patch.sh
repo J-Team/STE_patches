@@ -8,7 +8,7 @@ rm -r packages/services/Telephony
 rm -r system/core
 rm -r system/vold
 
-repo sync
+repo sync -l
 
 echo "Applying Oliver patches - android_frameworks_av"
 cp patches/frameworks_av.patch frameworks/av/frameworks_av.patch
