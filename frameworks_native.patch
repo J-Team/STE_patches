@@ -1,8 +1,8 @@
-commit e8b7b881d970425627e4bff0ac6a9f3fffaf547f
+commit aace09e3da4cf60cde00aa3151a4f40ca2f4e25a
 Author: Robert Rozic <rooobertinhooo@gmail.com>
-Date:   Tue Jan 28 21:42:49 2014 +0100
+Date:   Sun Feb 2 12:47:40 2014 +0100
 
-    STE OMX FIX
+    STE OMX Fix
 
 diff --git a/include/binder/MemoryBase.h b/include/binder/MemoryBase.h
 index 463e26d..5bf104b 100644
@@ -19,90 +19,111 @@ index 463e26d..5bf104b 100644
  private:
      size_t          mSize;
 diff --git a/include/binder/Parcel.h b/include/binder/Parcel.h
-index c95f297..41902e1 100644
+index c95f297..a35372e 100644
 --- a/include/binder/Parcel.h
 +++ b/include/binder/Parcel.h
-@@ -27,8 +27,8 @@
+@@ -27,8 +27,12 @@
  // ---------------------------------------------------------------------------
  namespace android {
  
 -template <typename T> class Flattenable;
  template <typename T> class LightFlattenable;
++#ifdef STE_HARDWARE
 +class Flattenable;
++#else
++template <typename T> class Flattenable;
++#endif
  class IBinder;
  class IPCThreadState;
  class ProcessState;
-@@ -102,9 +102,7 @@ public:
+@@ -102,9 +106,13 @@ public:
      status_t            writeStrongBinder(const sp<IBinder>& val);
      status_t            writeWeakBinder(const wp<IBinder>& val);
      status_t            writeInt32Array(size_t len, const int32_t *val);
 -
--    template<typename T>
--    status_t            write(const Flattenable<T>& val);
++#ifdef STE_HARDWARE
 +    status_t            write(const Flattenable& val);
++#else
+     template<typename T>
+     status_t            write(const Flattenable<T>& val);
++#endif
++
  
      template<typename T>
      status_t            write(const LightFlattenable<T>& val);
-@@ -159,9 +157,7 @@ public:
+@@ -159,9 +167,12 @@ public:
      const char16_t*     readString16Inplace(size_t* outLen) const;
      sp<IBinder>         readStrongBinder() const;
      wp<IBinder>         readWeakBinder() const;
 -
--    template<typename T>
--    status_t            read(Flattenable<T>& val) const;
++#ifdef STE_HARDWARE
 +    status_t            read(Flattenable& val) const;
++#else
+     template<typename T>
+     status_t            read(Flattenable<T>& val) const;
++#endif
  
      template<typename T>
      status_t            read(LightFlattenable<T>& val) const;
-@@ -274,11 +270,10 @@ private:
+@@ -274,11 +285,18 @@ private:
          virtual status_t unflatten(void const* buffer, size_t size, int const* fds, size_t count) = 0;
      };
  
--    template<typename T>
++#ifndef STE_HARDWARE
+     template<typename T>
++#endif
      class FlattenableHelper : public FlattenableHelperInterface {
          friend class Parcel;
--        const Flattenable<T>& val;
--        explicit FlattenableHelper(const Flattenable<T>& val) : val(val) { }
++#ifdef STE_HARDWARE
 +        const Flattenable& val;
 +        explicit FlattenableHelper(const Flattenable& val) : val(val) { }
++#else
+         const Flattenable<T>& val;
+         explicit FlattenableHelper(const Flattenable<T>& val) : val(val) { }
++#endif
  
      public:
          virtual size_t getFlattenedSize() const {
-@@ -291,7 +286,7 @@ private:
+@@ -291,7 +309,11 @@ private:
              return val.flatten(buffer, size, fds, count);
          }
          virtual status_t unflatten(void const* buffer, size_t size, int const* fds, size_t count) {
--            return const_cast<Flattenable<T>&>(val).unflatten(buffer, size, fds, count);
++#ifdef STE_HARDWARE
 +            return const_cast<Flattenable&>(val).unflatten(buffer, size, fds, count);
++#else
+             return const_cast<Flattenable<T>&>(val).unflatten(buffer, size, fds, count);
++#endif
          }
      };
      status_t write(const FlattenableHelperInterface& val);
-@@ -314,12 +309,6 @@ public:
+@@ -313,11 +335,13 @@ public:
+ 
  // ---------------------------------------------------------------------------
  
++#ifndef STE_HARDWARE
  template<typename T>
--status_t Parcel::write(const Flattenable<T>& val) {
--    const FlattenableHelper<T> helper(val);
--    return write(helper);
--}
--
--template<typename T>
- status_t Parcel::write(const LightFlattenable<T>& val) {
-     size_t size(val.getFlattenedSize());
-     if (!val.isFixedSize()) {
-@@ -338,12 +327,6 @@ status_t Parcel::write(const LightFlattenable<T>& val) {
+ status_t Parcel::write(const Flattenable<T>& val) {
+     const FlattenableHelper<T> helper(val);
+     return write(helper);
  }
++#endif
  
  template<typename T>
--status_t Parcel::read(Flattenable<T>& val) const {
--    FlattenableHelper<T> helper(val);
--    return read(helper);
--}
--
--template<typename T>
+ status_t Parcel::write(const LightFlattenable<T>& val) {
+@@ -337,11 +361,13 @@ status_t Parcel::write(const LightFlattenable<T>& val) {
+     return NO_ERROR;
+ }
+ 
++#ifndef STE_HARDWARE
+ template<typename T>
+ status_t Parcel::read(Flattenable<T>& val) const {
+     FlattenableHelper<T> helper(val);
+     return read(helper);
+ }
++#endif
+ 
+ template<typename T>
  status_t Parcel::read(LightFlattenable<T>& val) const {
-     size_t size;
-     if (val.isFixedSize()) {
 diff --git a/include/gui/BufferQueue.h b/include/gui/BufferQueue.h
 index 6250dbb..c923e9c 100644
 --- a/include/gui/BufferQueue.h
@@ -154,7 +175,7 @@ index a5fdfb9..fda016d 100644
              bool useFenceSync = true, bool isControlledByApp = false);
  
 +#ifdef STE_HARDWARE
-+    // Method for closing copybit device while abandoning the surface
++    // Method for closing copybit device while abandoning the surface 
 +    virtual ~GLConsumer();
 +#endif
 +
@@ -209,30 +230,36 @@ index a5fdfb9..fda016d 100644
      // an OpenGL ES context.  For legacy reasons, this is initialized to true,
      // indicating that the ConsumerBase is considered to be attached to
 diff --git a/include/gui/IGraphicBufferConsumer.h b/include/gui/IGraphicBufferConsumer.h
-index 0e35f13..b6a7b7a 100644
+index 0e35f13..cbed2c4 100644
 --- a/include/gui/IGraphicBufferConsumer.h
 +++ b/include/gui/IGraphicBufferConsumer.h
-@@ -39,8 +39,7 @@ class IGraphicBufferConsumer : public IInterface {
+@@ -39,8 +39,12 @@ class IGraphicBufferConsumer : public IInterface {
  public:
  
      // public facing structure for BufferSlot
--    class BufferItem : public Flattenable<BufferItem> {
--        friend class Flattenable<BufferItem>;
++#ifdef STE_HARDWARE
 +    class BufferItem : public Flattenable {
++#else
+     class BufferItem : public Flattenable<BufferItem> {
+         friend class Flattenable<BufferItem>;
++#endif
          size_t getPodSize() const;
          size_t getFlattenedSize() const;
          size_t getFdCount() const;
 diff --git a/include/gui/IGraphicBufferProducer.h b/include/gui/IGraphicBufferProducer.h
-index a221cba..8f24902 100644
+index a221cba..5d7455e 100644
 --- a/include/gui/IGraphicBufferProducer.h
 +++ b/include/gui/IGraphicBufferProducer.h
-@@ -105,8 +105,7 @@ public:
+@@ -105,8 +105,12 @@ public:
      // and height of the window and current transform applied to buffers,
      // respectively.
  
--    struct QueueBufferInput : public Flattenable<QueueBufferInput> {
--        friend class Flattenable<QueueBufferInput>;
++#ifdef STE_HARDWARE
 +    struct QueueBufferInput : public Flattenable {
++#else
+     struct QueueBufferInput : public Flattenable<QueueBufferInput> {
+         friend class Flattenable<QueueBufferInput>;
++#endif
          inline QueueBufferInput(const Parcel& parcel);
          inline QueueBufferInput(int64_t timestamp, bool isAutoTimestamp,
                  const Rect& crop, int scalingMode, uint32_t transform, bool async,
@@ -251,37 +278,42 @@ index 96a4396..d052744 100644
      OMX_QCOM_COLOR_FormatYUV420PackedSemiPlanar64x32Tile2m8ka = 0x7FA30C03,
      OMX_SEC_COLOR_FormatNV12Tiled = 0x7FC00002,
 diff --git a/include/ui/Fence.h b/include/ui/Fence.h
-index 20466b6..70078bf 100644
+index 20466b6..4fdb425 100644
 --- a/include/ui/Fence.h
 +++ b/include/ui/Fence.h
-@@ -36,7 +36,7 @@ namespace android {
+@@ -36,7 +36,11 @@ namespace android {
  // ===========================================================================
  
  class Fence
--    : public LightRefBase<Fence>, public Flattenable<Fence>
++#ifdef STE_HARDWARE
 +    : public LightRefBase<Fence>, public Flattenable
++#else
+     : public LightRefBase<Fence>, public Flattenable<Fence>
++#endif
  {
  public:
      static const sp<Fence> NO_FENCE;
 diff --git a/include/ui/GraphicBuffer.h b/include/ui/GraphicBuffer.h
-index 7f8cde6..16994bd 100644
+index 7f8cde6..3f7114d 100644
 --- a/include/ui/GraphicBuffer.h
 +++ b/include/ui/GraphicBuffer.h
-@@ -38,10 +38,14 @@ class GraphicBufferMapper;
+@@ -38,10 +38,18 @@ class GraphicBufferMapper;
  // ===========================================================================
  
  class GraphicBuffer
 -    : public ANativeObjectBase< ANativeWindowBuffer, GraphicBuffer, RefBase >,
--      public Flattenable<GraphicBuffer>
 +    : public ANativeObjectBase< ANativeWindowBuffer, GraphicBuffer,
 +#ifdef STE_HARDWARE
 +    LightRefBase<GraphicBuffer> >,
++      public Flattenable
 +#else
 +    RefBase >,
+       public Flattenable<GraphicBuffer>
 +#endif
-+      public Flattenable
  {
--    friend class Flattenable<GraphicBuffer>;
++#ifndef STE_HARDWARE
+     friend class Flattenable<GraphicBuffer>;
++#endif
  public:
  
      enum {
@@ -383,29 +415,33 @@ index 5c82330..105c5df 100644
  }; // namespace android
  
 diff --git a/libs/binder/Parcel.cpp b/libs/binder/Parcel.cpp
-index 38e019c..5bb0550 100644
+index 38e019c..2f7a0a8 100644
 --- a/libs/binder/Parcel.cpp
 +++ b/libs/binder/Parcel.cpp
-@@ -808,6 +808,11 @@ status_t Parcel::writeBlob(size_t len, WritableBlob* outBlob)
+@@ -808,6 +808,13 @@ status_t Parcel::writeBlob(size_t len, WritableBlob* outBlob)
      return status;
  }
  
++#ifdef STE_HARDWARE
 +status_t Parcel::write(const Flattenable& val) {
 +    const FlattenableHelper helper(val);
 +    return write(helper);
 +}
++#endif
 +
  status_t Parcel::write(const FlattenableHelperInterface& val)
  {
      status_t err;
-@@ -1184,6 +1189,11 @@ status_t Parcel::readBlob(size_t len, ReadableBlob* outBlob) const
+@@ -1184,6 +1191,13 @@ status_t Parcel::readBlob(size_t len, ReadableBlob* outBlob) const
      return NO_ERROR;
  }
  
++#ifdef STE_HARDWARE
 +status_t Parcel::read(Flattenable& val) const {
 +    FlattenableHelper helper(val);
 +    return read(helper);
 +}
++#endif
 +
  status_t Parcel::read(FlattenableHelperInterface& val) const
  {
@@ -668,6 +704,72 @@ index 6517c8c..6411a5e 100644
      case HAL_PIXEL_FORMAT_YCrCb_420_SP:
      case HAL_PIXEL_FORMAT_YV12:
          info->bitsPerPixel = 12;
+diff --git a/opengl/include/EGL/eglext.h b/opengl/include/EGL/eglext.h
+index 3b2984a..9736c5a 100644
+--- a/opengl/include/EGL/eglext.h
++++ b/opengl/include/EGL/eglext.h
+@@ -313,6 +313,7 @@ typedef EGLBoolean (EGLAPIENTRYP PFNEGLQUERYSURFACEPOINTERANGLEPROC) (EGLDisplay
+ #endif
+ 
+ #if KHRONOS_SUPPORT_INT64   /* EGLuint64NV requires 64-bit uint support */
++#ifndef STE_HARDWARE
+ #ifndef EGL_NV_system_time
+ #define EGL_NV_system_time 1
+ typedef khronos_utime_nanoseconds_t EGLuint64NV;
+@@ -324,6 +325,7 @@ typedef EGLuint64NV (EGLAPIENTRYP PFNEGLGETSYSTEMTIMEFREQUENCYNVPROC) (void);
+ typedef EGLuint64NV (EGLAPIENTRYP PFNEGLGETSYSTEMTIMENVPROC) (void);
+ #endif
+ #endif
++#endif
+ 
+ #if KHRONOS_SUPPORT_INT64 /* EGLuint64KHR requires 64-bit uint support */
+ #ifndef EGL_KHR_stream
+diff --git a/opengl/libs/EGL/eglApi.cpp b/opengl/libs/EGL/eglApi.cpp
+index 0cc5265..48a196d 100644
+--- a/opengl/libs/EGL/eglApi.cpp
++++ b/opengl/libs/EGL/eglApi.cpp
+@@ -139,11 +139,13 @@ static const extention_map_t sExtensionMap[] = {
+     { "eglGetSyncAttribKHR",
+             (__eglMustCastToProperFunctionPointerType)&eglGetSyncAttribKHR },
+ 
++#ifndef STE_HARDWARE
+     // EGL_NV_system_time
+     { "eglGetSystemTimeFrequencyNV",
+             (__eglMustCastToProperFunctionPointerType)&eglGetSystemTimeFrequencyNV },
+     { "eglGetSystemTimeNV",
+             (__eglMustCastToProperFunctionPointerType)&eglGetSystemTimeNV },
++#endif
+ 
+     // EGL_KHR_wait_sync
+     { "eglWaitSyncKHR",
+@@ -1551,6 +1553,7 @@ EGLBoolean eglPresentationTimeANDROID(EGLDisplay dpy, EGLSurface surface,
+ // ----------------------------------------------------------------------------
+ // NVIDIA extensions
+ // ----------------------------------------------------------------------------
++#ifndef STE_HARDWARE
+ EGLuint64NV eglGetSystemTimeFrequencyNV()
+ {
+     clearError();
+@@ -1586,3 +1589,4 @@ EGLuint64NV eglGetSystemTimeNV()
+ 
+     return setErrorQuiet(EGL_BAD_DISPLAY, 0);
+ }
++#endif
+diff --git a/opengl/libs/EGL/egl_entries.in b/opengl/libs/EGL/egl_entries.in
+index 70d0e52..1dedd7c 100644
+--- a/opengl/libs/EGL/egl_entries.in
++++ b/opengl/libs/EGL/egl_entries.in
+@@ -83,8 +83,10 @@ EGL_ENTRY(EGLint, eglDupNativeFenceFDANDROID, EGLDisplay, EGLSyncKHR)
+ 
+ /* NVIDIA extensions */
+ 
++#ifndef STE_HARDWARE
+ EGL_ENTRY(EGLuint64NV, eglGetSystemTimeFrequencyNV, void)
+ EGL_ENTRY(EGLuint64NV, eglGetSystemTimeNV, void)
++#endif
+ 
+ /* IMG extensions */
+ 
 diff --git a/services/surfaceflinger/DisplayDevice.cpp b/services/surfaceflinger/DisplayDevice.cpp
 index f56a1c5..fae698f 100755
 --- a/services/surfaceflinger/DisplayDevice.cpp
