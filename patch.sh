@@ -10,16 +10,18 @@ rm -r system/vold
 
 repo sync -l
 
-echo "Applying Oliver patches - android_frameworks_av"
+echo "android_frameworks_av"
 cp patches/frameworks_av.patch frameworks/av/frameworks_av.patch
 cd frameworks/av
 git apply frameworks_av.patch
 rm frameworks_av.patch
+git revert 1eec4467fb12ee1ae88aa9c1374c79fbf4d03e68
+git revert 2364610daa8e076648f533f265a595474e5d5834
 cd ../..
 
 echo ""
 
-echo "Applying Oliver patches - android_frameworks_native"
+echo "android_frameworks_native"
 cp patches/frameworks_native.patch frameworks/native/frameworks_native.patch
 cd frameworks/native
 git apply frameworks_native.patch
