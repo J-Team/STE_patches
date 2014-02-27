@@ -132,7 +132,7 @@ index 170e587..169dec6 100644
  extern const char *MEDIA_MIMETYPE_AUDIO_AMR_NB;
  extern const char *MEDIA_MIMETYPE_AUDIO_AMR_WB;
 diff --git a/include/media/stagefright/OMXCodec.h b/include/media/stagefright/OMXCodec.h
-index eb18470..41e51f2 100644
+index 8ad8e8c..c9de0c6 100644
 --- a/include/media/stagefright/OMXCodec.h
 +++ b/include/media/stagefright/OMXCodec.h
 @@ -86,6 +86,10 @@ struct OMXCodec : public MediaSource,
@@ -147,7 +147,7 @@ index eb18470..41e51f2 100644
          kNeedsFlushBeforeDisable              = 1,
          kWantsNALFragments                    = 2,
 @@ -107,6 +111,9 @@ struct OMXCodec : public MediaSource,
-         kRequiresGlobalFlush                  = 0x20000000, // 2^29
+ #ifdef QCOM_HARDWARE
          kRequiresWMAProComponent              = 0x40000000, //2^30
  #endif
 +#ifdef STE_HARDWARE
