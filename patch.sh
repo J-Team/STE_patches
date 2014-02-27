@@ -16,7 +16,11 @@ cd frameworks/av
 git apply frameworks_av.patch
 rm frameworks_av.patch
 git revert 1eec4467fb12ee1ae88aa9c1374c79fbf4d03e68
+
 git revert 2364610daa8e076648f533f265a595474e5d5834
+
+git revert ff7ae18ca39ced274f37856b8da9dc1e446f69dd
+
 cd ../..
 
 echo ""
