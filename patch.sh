@@ -30,6 +30,7 @@ cp patches/frameworks_native.patch frameworks/native/frameworks_native.patch
 cd frameworks/native
 git apply frameworks_native.patch
 rm frameworks_native.patch
+git revert 8124b181d4b5a3a44796fdb0e3ea4e4171f102c7
 cd ../..
 
 echo ""
