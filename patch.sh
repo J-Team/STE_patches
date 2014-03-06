@@ -3,7 +3,6 @@
 rm -r frameworks/av
 rm -r frameworks/native
 rm -r hardware/libhardware_legacy
-rm -r art
 rm -r packages/services/Telephony
 rm -r system/core
 rm -r system/vold
@@ -42,15 +41,6 @@ cd hardware/libhardware_legacy
 git apply vibrator_fix.patch
 rm vibrator_fix.patch
 cd ../..
-
-echo ""
-
-echo "verifier: Bypass monitor-{enter,exit} depth checks"
-cp patches/art.patch art/art.patch
-cd art
-git apply art.patch
-rm art.patch
-cd ..
 
 echo ""
 
