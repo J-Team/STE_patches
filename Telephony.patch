@@ -12,9 +12,9 @@ index 3c8e9d3..de13889 100644
  
      public void onMuteChange(boolean muted) {
          logD("onMuteChange: " + muted);
-+        
++
          notifyListeners();
-+        
++
 +        // Fix for low in-call volume bug
 +        // Reset the audio volume stream after mute change
 +        PhoneUtils.resetAudioStreamVolume();
@@ -25,7 +25,7 @@ index 3c8e9d3..de13889 100644
          if (doNotify) {
              notifyListeners();
          }
-+        
++
 +        // Fix for low in-call volume bug
 +        // Reset the audio volume stream after switching audio mode
 +        PhoneUtils.resetAudioStreamVolume();
@@ -40,7 +40,7 @@ index 2d44977..7df15e9 100644
              }
          }
      }
-+    
++
 +    /**
 +     * Reset the audio stream volume to fix the low in-call volume bug.
 +     *
