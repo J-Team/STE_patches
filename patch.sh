@@ -1,7 +1,7 @@
 #!/bin/bash
 
-rm -r frameworks/av
-rm -r frameworks/native
+#rm -r frameworks/av
+#rm -r frameworks/native
 rm -r hardware/libhardware_legacy
 rm -r packages/inputmethods/LatinIME
 rm -r packages/services/Telephony
@@ -10,26 +10,26 @@ rm -r system/vold
 
 repo sync -l
 
-echo "android_frameworks_av"
-cp patches/frameworks_av.patch frameworks/av/frameworks_av.patch
-cd frameworks/av
-git apply frameworks_av.patch
-rm frameworks_av.patch
-git revert ff7ae18ca39ced274f37856b8da9dc1e446f69dd
+#echo "android_frameworks_av"
+#cp patches/frameworks_av.patch frameworks/av/frameworks_av.patch
+#cd frameworks/av
+#git apply frameworks_av.patch
+#rm frameworks_av.patch
+#git revert ff7ae18ca39ced274f37856b8da9dc1e446f69dd
 
-cd ../..
+#cd ../..
 
-echo ""
+#echo ""
 
-echo "android_frameworks_native"
-cp patches/frameworks_native.patch frameworks/native/frameworks_native.patch
-cd frameworks/native
-git apply frameworks_native.patch
-rm frameworks_native.patch
-git revert 8124b181d4b5a3a44796fdb0e3ea4e4171f102c7
-cd ../..
+#echo "android_frameworks_native"
+#cp patches/frameworks_native.patch frameworks/native/frameworks_native.patch
+#cd frameworks/native
+#git apply frameworks_native.patch
+#rm frameworks_native.patch
+#git revert 8124b181d4b5a3a44796fdb0e3ea4e4171f102c7
+#cd ../..
 
-echo ""
+#echo ""
 
 echo "Applying vibrator fix"
 
@@ -51,9 +51,7 @@ cd ../../..
 
 echo ""
 
-echo "[PATCH 1/3] Port incall volume workaround to cm11 - q"
-echo "[PATCH 2/3] reset the audio volume stream after switching audio mode"
-echo "[PATCH 3/3] get BluetoothManager to ask about bt headset (KK implementation)"
+echo "Low Incall Volume Fix"
 cp patches/Telephony.patch packages/services/Telephony/Telephony.patch
 cd packages/services/Telephony
 git apply Telephony.patch
