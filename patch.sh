@@ -2,6 +2,7 @@
 
 #rm -r frameworks/av
 #rm -r frameworks/native
+rm -r bootable/recovery
 rm -r hardware/libhardware_legacy
 rm -r packages/inputmethods/LatinIME
 rm -r packages/services/Telephony
@@ -30,6 +31,16 @@ repo sync -l
 #cd ../..
 
 #echo ""
+
+echo "Better compatibility with recoveries"
+
+cp patches/bootable_recovery.patch bootable/recovery/bootable_recovery.patch
+cd bootable/recovery
+git apply bootable_recovery.patch
+rm bootable_recovery.patch
+cd ../..
+
+echo ""
 
 echo "Applying vibrator fix"
 
