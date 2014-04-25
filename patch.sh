@@ -6,8 +6,8 @@ rm -r bootable/recovery
 rm -r hardware/libhardware_legacy
 rm -r packages/inputmethods/LatinIME
 rm -r packages/services/Telephony
-rm -r system/core
-rm -r system/vold
+#rm -r system/core
+#rm -r system/vold
 
 repo sync -l
 
@@ -30,7 +30,7 @@ repo sync -l
 #git revert 8124b181d4b5a3a44796fdb0e3ea4e4171f102c7
 #cd ../..
 
-#echo ""
+echo ""
 
 echo "Better compatibility with recoveries"
 
@@ -71,20 +71,20 @@ cd ../../..
 
 echo ""
 
-echo "system/core fix"
-cp patches/system_core.patch system/core/system_core.patch
-cd system/core
-git apply system_core.patch
-rm system_core.patch
-cd ../..
+#echo "system/core fix"
+#cp patches/system_core.patch system/core/system_core.patch
+#cd system/core
+#git apply system_core.patch
+#rm system_core.patch
+#cd ../..
 
-echo ""
+#echo ""
 
-echo "system/vold fix"
-cp patches/system_vold.patch system/vold/system_vold.patch
-cd system/vold
-git apply system_vold.patch
-rm system_vold.patch
-cd ../..
+#echo "system/vold fix"
+#cp patches/system_vold.patch system/vold/system_vold.patch
+#cd system/vold
+#git apply system_vold.patch
+#rm system_vold.patch
+#cd ../..
 
-echo ""
+#echo ""
