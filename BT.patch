@@ -1,0 +1,38 @@
+commit f4190edfe4b34ccfb7ba5ac002a1f0a6705b1e2c
+Author: kaiyiz <kaiyiz@codeaurora.org>
+Date:   Thu Dec 19 17:56:05 2013 +0800
+
+    Bluetooth: Fix the issue of certain files didn't send by bluetooth
+
+    DUT didn't send APK files or files whose format were not supported.
+    DUT didn't send several MP3 files by one time. These caused by the
+    bluetooth file transfer limit.
+
+    Add file type for bluetooth.
+
+    CRs-Fixed: 591288
+
+    Change-Id: Iaa7443dafa724a7c34597bd14bd160528a05fd06
+
+diff --git a/AndroidManifest.xml b/AndroidManifest.xml
+index 58c464c..b4b0899 100644
+--- a/AndroidManifest.xml
++++ b/AndroidManifest.xml
+@@ -135,6 +135,8 @@
+                 <data android:mimeType="application/zip" />
+                 <data android:mimeType="application/vnd.ms-excel" />
+                 <data android:mimeType="application/msword" />
++                <data android:mimeType="application/vnd.android.package-archive" />
++                <data android:mimeType="*/*" />
+                 <data android:mimeType="application/vnd.ms-powerpoint" />
+                 <data android:mimeType="application/pdf" />
+                 <data android:mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+@@ -147,6 +149,8 @@
+                 <category android:name="android.intent.category.DEFAULT" />
+                 <data android:mimeType="image/*" />
+                 <data android:mimeType="video/*" />
++                <data android:mimeType="audio/*" />
++                <data android:mimeType="*/*" />
+                 <data android:mimeType="x-mixmedia/*" />
+                 <data android:mimeType="text/x-vcard" />
+             </intent-filter>
