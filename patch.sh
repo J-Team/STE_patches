@@ -2,7 +2,6 @@
 
 rm -r bootable/recovery
 rm -r hardware/libhardware_legacy
-rm -r packages/inputmethods/LatinIME
 rm -r packages/services/Telephony
 rm -r packages/apps/Bluetooth
 
@@ -27,16 +26,6 @@ cd hardware/libhardware_legacy
 git apply vibrator_fix.patch
 rm vibrator_fix.patch
 cd ../..
-
-echo ""
-
-echo "Fix Keyboard crash"
-
-cp patches/LatinIme.patch packages/inputmethods/LatinIME/LatinIME.patch
-cd packages/inputmethods/LatinIME
-git apply LatinIME.patch
-rm LatinIME.patch
-cd ../../..
 
 echo ""
 
