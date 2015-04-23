@@ -15,6 +15,7 @@ cp patches/bootable_recovery.patch bootable/recovery/bootable_recovery.patch
 cd bootable/recovery
 git apply bootable_recovery.patch
 rm bootable_recovery.patch
+git revert 90ca138d051e33ef86be03fc56354eb5705528cb
 cd ../..
 
 echo ""
